@@ -4,6 +4,7 @@
   "description": "---fill-this---",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "env AZURE_NODE_ENV=development env NODE_ENV=development npx mocha --exit"
   },
   "keywords": [],
@@ -23,6 +24,12 @@
     "eslint-config-google": "^0.14.0",
     "jscpd": "^3.5.4",
     "mocha": "^10.2.0",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "supertest": "^6.3.4"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.1.3",
+    "nodemon": "^3.0.3"
   }
 }
