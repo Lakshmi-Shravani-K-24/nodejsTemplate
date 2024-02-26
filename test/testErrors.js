@@ -14,7 +14,6 @@ describe('Error Handling in Battery Service', () => {
   });
 
   it('should throw error for findBatteryById', async () => {
-    this.timeout(5000); 
     const batteryId = 'invalidId'; // Invalid ID to intentionally cause an error
 
     try {
