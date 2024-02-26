@@ -1,22 +1,38 @@
-const express = require('express');
-const app = express();
-const connectDB = require('./db');
-const bodyParser = require('body-parser');
+const Battery = require('./BatterySchema');
 
-// Connect to the database
-connectDB();
+async function createBattery(batteryData) {
+  try {
+    const newBattery = await Battery.create(batteryData);
+    return newBattery;
+  } catch (error) {
+    throw new Error(`Failed to create battery: ${error.message}`);
+  }
+}
 
-app.use(bodyParser.json());
+async function findBatteryById(batteryId) {
+  try {
+    const battery = await Battery.findOne({batteryId});
+    return battery;
+  } catch (error) {
+    throw new Error(`Failed to find battery: ${error.message}`);
+  }
+}
 
-// Import routes
-const batteryRoutes = require('./routes/batteryRoutes');
+async function updateBattery(batteryId, updateData) {
+  try {
+    const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
+    return updatedBattery;
+  } catch (error) {
+    throw new Error(`Failed to update battery: ${error.message}`);
+  }
+}
 
-// Use routes
-app.use('/batteries', batteryRoutes);
+async function deleteBattery(batteryId) {
+  try {
+    await Battery.deleteOne({batteryId});
+  } catch (error) {
+    throw new Error(`Failed to delete battery: ${error.message}`);
+  }
+}
 
-const PORT = process.env.PORT || 3001;
-const server = app.listen(PORT, () => {
-  console.log(`Server started running on port ${PORT}`);
-});
-
-module.exports = {app, server};
+module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
