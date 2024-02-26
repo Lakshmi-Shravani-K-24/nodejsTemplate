@@ -11,7 +11,14 @@ async function createBattery(batteryData) {
 
 async function findBatteryById(batteryId) {
   try {
-    const battery = await Battery.findOne({batteryId});
+    let timeoutPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error('Timeout occurred while finding battery'));
+      }, 5000); // Timeout after 5 seconds
+    });
+
+    const batteryPromise = Battery.findOne({ batteryId });
+    const battery = await Promise.race([batteryPromise, timeoutPromise]);
     return battery;
   } catch (error) {
     throw new Error(`Failed to find battery: ${error.message}`);
