@@ -82,6 +82,9 @@ describe('Battery Schema Validation', () => {
   });
 
   it('should ensure batteryId is unique', async () => {
+    before(async () => {
+    await connect(); // Connect to the in-memory database before running CRUD tests
+  });
     const batteryData1 = {
       batteryId: 'test123',
       batteryname: 'Test Battery 1',
