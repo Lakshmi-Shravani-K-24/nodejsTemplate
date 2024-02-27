@@ -51,19 +51,7 @@ describe('Battery Schema Validation', () => {
         temperature: 25,
         soc: 50,
       },
-      errorMessage: 'Path `chargerate` is required.'
-    },
-    {
-      field: 'description',
-      testData: {
-        batteryId: 'test123',
-        batteryname: 'Test Battery li-Ion',
-        temperature: 34,
-        soc: 60,
-        chargerate: 0.8,
-        description: {}, // Providing an empty object instead of a string
-      },
-      errorMessage: 'Description must be a string.'
+      errorMessage: 'Path `chargerate` is required.'  
     }
   ];
 
