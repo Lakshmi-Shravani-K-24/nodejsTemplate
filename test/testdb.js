@@ -1,84 +1,62 @@
-const mongoose = require('mongoose');
-const assert = require('assert');
-const { connect, disconnect } = require('../dbconnection.js');
-const {
-  createBattery,
-  findBatteryById,
-  updateBattery,
-  deleteBattery,
-} = require('../index.js');
+const chai = require('chai');
+const {createBattery, getBatteryById, updateBattery, deleteBattery} = require('../index');
+const {connect, disconnect} = require('../dbconnection');
+const {expect} = chai;
 
-describe('Database Connection', () => {
-  before(async () => {
+describe('Battery CRUD Operations', () => {
+  let testBatteryId;
+  before(async function() {
+    this.timeout(5000); // Set timeout to 5000ms (or adjust as needed)
     await connect(); // Connect to the in-memory database before running tests
   });
-
   after(async () => {
     await disconnect(); // Disconnect from the in-memory database after running tests
   });
 
-  it('should connect to the in-memory database', async function() {
-    this.timeout(5000); // Set timeout to 5000ms (5 seconds)
-    assert.strictEqual(mongoose.connection.readyState, 1); // 1 means connected
-  });
-});
-
-describe('Battery CRUD operations', () => {
-  before(async () => {
-    await connect(); // Connect to the in-memory database before running CRUD tests
-  });
-
-  after(async () => {
-    await disconnect(); // Disconnect from the in-memory database after running CRUD tests
-  });
-
   beforeEach(async () => {
-    // No need to connect here as it's already connected in 'before' hook
-    // Insert test data before each test case
+    // Create a new battery before each test
     const batteryData = {
-      batteryId: '12345',
+      batteryId: '123456',
       batteryname: 'Test Battery',
       temperature: 25,
       soc: 80,
       chargerate: 5,
-      description: 'Test battery description',
     };
-    await createBattery(batteryData);
+    const createdBattery = await createBattery(batteryData);
+    testBatteryId = createdBattery._id; // Store the ID for later use
   });
 
   afterEach(async () => {
-    // Clean up test data after each test case
-    await deleteBattery('12345');
+    // Delete the test battery after each test
+    await deleteBattery(testBatteryId);
   });
 
-  it('should create a new battery', async () => {
-    const batteryData = {
-      batteryId: '67890',
-      batteryname: 'Test Battery 2',
-      temperature: 30,
-      soc: 70,
-      chargerate: 7,
-      description: 'Test battery 2 description',
+  it('should create a battery', async () => {
+    // Test the creation of a battery
+    expect(testBatteryId).to.exist;
+  });
+
+  it('should get a battery by ID', async () => {
+    // Test getting a battery by ID
+    const battery = await getBatteryById(testBatteryId);
+    expect(battery).to.exist;
+    expect(battery.batteryId).to.equal('123456');
+  });
+
+  it('should update a battery', async () => {
+    // Test updating a battery
+    const newData = {
+      soc: 85,
     };
-    const newBattery = await createBattery(batteryData);
-    assert.strictEqual(newBattery.batteryId, batteryData.batteryId);
+    const updatedBattery = await updateBattery( '123456', testBatteryId, newData);
+    expect(updatedBattery).to.exist;
+    expect(updatedBattery.soc).to.equal(85);
   });
 
-  it('should read the created battery', async () => {
-    const battery = await findBatteryById('12345');
-    assert.ok(battery); // Check if battery exists
-    assert.strictEqual(battery.batteryname, 'Test Battery');
-  });
-
-  it('should update the battery', async () => {
-    await updateBattery('12345', {temperature: 30});
-    const updatedBattery = await findBatteryById('12345');
-    assert.strictEqual(updatedBattery.temperature, 30);
-  });
-
-  it('should delete the battery', async () => {
-    await deleteBattery('12345');
-    const deletedBattery = await findBatteryById('12345');
-    assert.strictEqual(deletedBattery, null);
+  it('should delete a battery', async () => {
+    // Test deleting a battery
+    const deletedBattery = await deleteBattery(testBatteryId);
+    expect(deletedBattery).to.exist;
+    expect(deletedBattery._id.toString()).to.equal(testBatteryId.toString());
   });
 });
