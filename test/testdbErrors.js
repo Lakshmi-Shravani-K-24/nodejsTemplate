@@ -1,51 +1,29 @@
-/* eslint-disable no-empty */
-/* eslint-disable max-len */
-// const assert = require('assert');
 const {expect} = require('chai');
+const {
+  createBattery,
+  findBatteryById,
+  updateBattery,
+  deleteBattery,
+} = require('../index.js');
 
-const {createBattery, findBatteryById, updateBattery, deleteBattery} = require('../index.js');
-
-describe('Error Handling in Battery Service', () => {
-  it('should throw a ValidationError for empty batteryData', async () => {
-    const batteryData = {}; // Empty data to intentionally cause an error
-
-    try {
-      await createBattery(batteryData);
-    } catch (error) {
-      expect(error).to.be.an.instanceOf(Error);
-      expect(error.name).to.equal('Error');
-      expect(error.message).to.equal('Battery data is required');
-    }
+describe('CRUD operations for Battery', () => {
+  it('should return error for empty battery data during creation', async () => {
+    const result = await createBattery({});
+    expect(result).to.have.property('error').that.equals('Invalid battery data');
   });
 
-  it('should throw an error when batteryId is not provided', async () => {
-    const batteryId = ''; // Empty ID to intentionally cause an error
-    try {
-      await findBatteryById(batteryId);
-    } catch (error) {
-      expect(error).to.be.an.instanceOf(Error);
-      expect(error.message).to.equal('Battery ID is required');
-    }
+  it('should return error for empty battery ID during find', async () => {
+    const result = await findBatteryById('');
+    expect(result).to.have.property('error').that.equals('Invalid battery ID');
   });
 
-  it('should throw error for updateBattery when batteryId is invalid', async () => {
-    const batteryId = '';
-    const updateData = {temperature: 30}; // Arbitrary update data
-    try {
-      await updateBattery(batteryId, updateData);
-    } catch (error) {
-      expect(error).to.be.an.instanceOf(Error);
-      expect(error.message).to.equal('Battery ID is required');
-    }
+  it('should return error for empty battery ID during update', async () => {
+    const result = await updateBattery('', {});
+    expect(result).to.have.property('error').that.equals('Invalid battery ID');
   });
 
-  it('should throw error for deleteBattery when batteryId is invalid', async () => {
-    const batteryId = ''; // Empty ID to intentionally cause an error
-    try {
-      await deleteBattery(batteryId);
-    } catch (error) {
-      expect(error).to.be.an.instanceOf(Error);
-      expect(error.message).to.equal('Battery ID is required');
-    }
+  it('should return error for empty battery ID during deletion', async () => {
+    const result = await deleteBattery('');
+    expect(result).to.have.property('error').that.equals('Invalid battery ID');
   });
 });
