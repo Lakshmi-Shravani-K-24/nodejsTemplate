@@ -7,50 +7,37 @@ function validateBatteryData(data) {
 function validateBatteryId(id) {
   return !id || typeof id !== 'string' || id.trim() === '';
 }
+
 async function createBattery(batteryData) {
   if (validateBatteryData(batteryData)) {
     return {error: 'Invalid battery data'};
   }
-  try {
-    const newBattery = await Battery.create(batteryData);
-    return newBattery;
-  } catch (error) {
-    return {error: `Failed to create battery: ${error.message}`};
-  }
+  const newBattery = await Battery.create(batteryData);
+  return newBattery;
 }
 
 async function findBatteryById(batteryId) {
   if (validateBatteryId(batteryId)) {
     return {error: 'Invalid battery ID'};
   }
-  try {
-    const battery = await Battery.findOne({batteryId});
-    return battery;
-  } catch (error) {
-    return {error: `Failed to find battery: ${error.message}`};
-  }
+  const battery = await Battery.findOne({batteryId});
+  return battery;
 }
+
 async function updateBattery(batteryId, updateData) {
   if (validateBatteryId(batteryId)) {
     return {error: 'Invalid battery ID'};
   }
-  try {
-    const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
-    return updatedBattery;
-  } catch (error) {
-    return {error: `Failed to update battery: ${error.message}`};
-  }
+  const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
+  return updatedBattery;
 }
+
 async function deleteBattery(batteryId) {
   if (validateBatteryId(batteryId)) {
     return {error: 'Invalid battery ID'};
   }
-  try {
-    await Battery.deleteOne({batteryId});
-    return {success: true};
-  } catch (error) {
-    return {error: `Failed to delete battery: ${error.message}`};
-  }
+  await Battery.deleteOne({batteryId});
+  return {success: true};
 }
 
 module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
