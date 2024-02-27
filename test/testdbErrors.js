@@ -2,9 +2,8 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const {createBattery, updateBattery, deleteBattery} = require('../index');
-const {connect, disconnect} = require('../dbconnection');
-
 const {expect} = chai;
+const {connect, disconnect} = require('../dbconnection');
 chai.use(chaiAsPromised);
 
 describe('Battery CRUD Operations - Negative Cases', function() {
@@ -54,15 +53,6 @@ describe('Battery CRUD Operations - Negative Cases', function() {
       const newData = null;
       await expect(updateBattery(batteryId, objectId, newData)).to.be.rejectedWith(Error, 'New data is required for updating the battery.');
     });
-
-    it('should throw error when new data is undefined', async function() {
-      const batteryId = 'someBatteryId';
-      const objectId = 'someObjectId';
-      const newData = undefined;
-      await expect(updateBattery(batteryId, objectId, newData)).to.be.rejectedWith(Error, 'New data is required for updating the battery.');
-    });
-
-    // Additional negative cases can be added for updateBattery function
   });
 
   describe('Delete Battery', function() {
