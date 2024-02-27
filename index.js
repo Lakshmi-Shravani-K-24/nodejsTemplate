@@ -2,14 +2,16 @@
 /* eslint-disable complexity */
 const Battery = require('./BatterySchema');
 
-// Validation function to check if battery data or ID is empty or invalid
+// Validation function to check if battery data is empty or invalid
 function validateBatteryData(data) {
   return !data || typeof data !== 'object' || Object.keys(data).length === 0;
 }
 
+// Validation function to check if battery ID is empty or invalid
 function validateBatteryId(id) {
-  return !id || typeof id !== 'string' || id.trim() === '';
+  return !id || typeof id !== 'string' || /^\s*$/.test(id);
 }
+
 
 async function createBattery(batteryData) {
   if (validateBatteryData(batteryData)) {
@@ -40,7 +42,7 @@ async function deleteBattery(batteryId) {
     return {error: 'Invalid battery ID'};
   }
   await Battery.deleteOne({batteryId});
-  return {success: true};
+  return {};
 }
 
 module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
