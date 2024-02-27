@@ -1,6 +1,5 @@
 const assert = require('assert');
-const mongoose = require('mongoose'); // Add this line to import mongoose
-const { BatterySchema, Battery } = require('../BatterySchema.js');
+const Battery = require('../BatterySchema');
 
 describe('Battery Schema Validation', () => {
   const testCases = [
@@ -12,7 +11,7 @@ describe('Battery Schema Validation', () => {
         soc: 50,
         chargerate: 10,
       },
-      errorMessage: 'Path `batteryId` is required.'
+      errorMessage: 'Path `batteryId` is required.',
     },
     {
       field: 'batteryname',
@@ -22,7 +21,7 @@ describe('Battery Schema Validation', () => {
         soc: 50,
         chargerate: 10,
       },
-      errorMessage: 'Path `batteryname` is required.'
+      errorMessage: 'Path `batteryname` is required.',
     },
     {
       field: 'temperature',
@@ -32,7 +31,7 @@ describe('Battery Schema Validation', () => {
         soc: 50,
         chargerate: 10,
       },
-      errorMessage: 'Path `temperature` is required.'
+      errorMessage: 'Path `temperature` is required.',
     },
     {
       field: 'soc',
@@ -42,7 +41,7 @@ describe('Battery Schema Validation', () => {
         temperature: 25,
         chargerate: 10,
       },
-      errorMessage: 'Path `soc` is required.'
+      errorMessage: 'Path `soc` is required.',
     },
     {
       field: 'chargerate',
@@ -52,11 +51,11 @@ describe('Battery Schema Validation', () => {
         temperature: 25,
         soc: 50,
       },
-      errorMessage: 'Path `chargerate` is required.'
-    }
+      errorMessage: 'Path `chargerate` is required.',
+    },
   ];
 
-  testCases.forEach(({ field, testData, errorMessage }) => {
+  testCases.forEach(({field, testData, errorMessage}) => {
     it(`should require ${field}`, async () => {
       const battery = new Battery(testData);
       let err;
@@ -69,21 +68,16 @@ describe('Battery Schema Validation', () => {
     });
   });
 
-  it('should fail validation when model name is set to an empty string', async () => {
-    try {
-      // Attempt to create a battery model with an empty string as the model name
-      const Battery = mongoose.model('', BatterySchema); // This line corresponds to the mutant
-      const battery = new Battery({
-        batteryId: 'test123',
-        batteryname: 'Test Battery',
-        temperature: 25,
-        soc: 50,
-        chargerate: 10,
-      });
-      await battery.validate(); // This line should throw an error
-      assert.fail('Validation should fail');
-    } catch (error) {
-      assert.ok(error); // Validation should fail due to empty model name
-    }
+  it('should create a valid battery with all required fields', async () => {
+    const battery = new Battery({
+      batteryId: 'test123',
+      batteryname: 'Test Battery',
+      temperature: 25,
+      soc: 50,
+      chargerate: 10,
+    });
+
+    const result = await battery.validate();
+    assert.strictEqual(result, undefined);
   });
 });
