@@ -7,7 +7,6 @@ const {
   updateBattery,
   deleteBattery,
 } = require('../index.js');
-const Battery = require('../BatterySchema');
 
 describe('Database Connection', () => {
   before(async () => {
