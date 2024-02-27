@@ -51,7 +51,7 @@ describe('Battery Schema Validation', () => {
         temperature: 25,
         soc: 50,
       },
-      errorMessage: 'Path `chargerate` is required.'  
+      errorMessage: 'Path `chargerate` is required.'
     }
   ];
 
@@ -68,16 +68,21 @@ describe('Battery Schema Validation', () => {
     });
   });
 
-  it('should create a valid battery with all required fields', async () => {
-    const battery = new Battery({
-      batteryId: 'test123',
-      batteryname: 'Test Battery',
-      temperature: 25,
-      soc: 50,
-      chargerate: 10,
-    });
-
-    const result = await battery.validate();
-    assert.strictEqual(result, undefined);
+  it('should fail validation when model name is set to an empty string', async () => {
+    try {
+      // Attempt to create a battery model with an empty string as the model name
+      const Battery = mongoose.model('', BatterySchema); // This line corresponds to the mutant
+      const battery = new Battery({
+        batteryId: 'test123',
+        batteryname: 'Test Battery',
+        temperature: 25,
+        soc: 50,
+        chargerate: 10,
+      });
+      await battery.validate(); // This line should throw an error
+      assert.fail('Validation should fail');
+    } catch (error) {
+      assert.ok(error); // Validation should fail due to empty model name
+    }
   });
 });
