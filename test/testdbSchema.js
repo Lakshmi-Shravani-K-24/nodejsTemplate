@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Battery = require('../BatterySchema');
+const {connect} = require('../dbconnection.js');
 
 describe('Battery Schema Validation', () => {
   const testCases = [
