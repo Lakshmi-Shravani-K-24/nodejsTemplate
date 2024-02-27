@@ -8,7 +8,7 @@ function validateBatteryData(data) {
 }
 
 function validateBatteryId(id) {
-  return !id || typeof id !== 'string' || id.trim() === '' || id.length > 100;
+  return !id || typeof id !== 'string' || id.trim() === '';
 }
 
 async function createBattery(batteryData) {
