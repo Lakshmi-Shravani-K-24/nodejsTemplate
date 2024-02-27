@@ -1,5 +1,6 @@
 const assert = require('assert');
-const Battery = require('../BatterySchema');
+const mongoose = require('mongoose'); // Add this line to import mongoose
+const Battery = require('../BatterySchema.js');
 
 describe('Battery Schema Validation', () => {
   const testCases = [
