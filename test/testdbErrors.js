@@ -1,4 +1,4 @@
-const {expect} = require('chai');
+const { expect } = require('chai');
 const {
   createBattery,
   findBatteryById,
@@ -7,23 +7,24 @@ const {
 } = require('../index.js');
 
 describe('CRUD operations for Battery', () => {
+  const testErrorHandling = async (operation, args, expectedError) => {
+    const result = await operation(...args);
+    expect(result).to.have.property('error').that.equals(expectedError);
+  };
+
   it('should return error for empty battery data during creation', async () => {
-    const result = await createBattery({});
-    expect(result).to.have.property('error').that.equals('Invalid battery data');
+    await testErrorHandling(createBattery, [{}], 'Invalid battery data');
   });
 
   it('should return error for empty battery ID during find', async () => {
-    const result = await findBatteryById('');
-    expect(result).to.have.property('error').that.equals('Invalid battery ID');
+    await testErrorHandling(findBatteryById, [''], 'Invalid battery ID');
   });
 
   it('should return error for empty battery ID during update', async () => {
-    const result = await updateBattery('', {});
-    expect(result).to.have.property('error').that.equals('Invalid battery ID');
+    await testErrorHandling(updateBattery, ['', {}], 'Invalid battery ID');
   });
 
   it('should return error for empty battery ID during deletion', async () => {
-    const result = await deleteBattery('');
-    expect(result).to.have.property('error').that.equals('Invalid battery ID');
+    await testErrorHandling(deleteBattery, [''], 'Invalid battery ID');
   });
 });
