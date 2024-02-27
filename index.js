@@ -1,38 +1,43 @@
 const Battery = require('./BatterySchema');
 
-async function createBattery(batteryData) {
-  try {
-    const newBattery = await Battery.create(batteryData);
-    return newBattery;
-  } catch (error) {
-    throw new Error(`Failed to create battery: ${error.message}`);
+function createBattery(batteryData) {
+  // Input validation
+  if (!batteryData || Object.keys(batteryData).length === 0) {
+    throw new Error('Battery data is required');
   }
+  return Battery.create(batteryData)
+      .then((newBattery) => newBattery);
 }
 
-async function findBatteryById(batteryId) {
-  try {
-    const battery = await Battery.findOne({batteryId});
-    return battery;
-  } catch (error) {
-    throw new Error(`Failed to find battery: ${error.message}`);
+function findBatteryById(batteryId) {
+  // Input validation
+  if (!batteryId || batteryId.trim() === '') {
+    throw new Error('Battery ID is required');
   }
+  return Battery.findOne({batteryId})
+      .then((battery) => battery);
 }
 
-async function updateBattery(batteryId, updateData) {
-  try {
-    const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
-    return updatedBattery;
-  } catch (error) {
-    throw new Error(`Failed to update battery: ${error.message}`);
+function updateBattery(batteryId, updateData) {
+  // Input validation
+  if (!batteryId || batteryId.trim() === '') {
+    throw new Error('Battery ID is required');
   }
+  return Battery.findOneAndUpdate({batteryId}, updateData, {new: true})
+      .then((updatedBattery) => updatedBattery);
 }
 
-async function deleteBattery(batteryId) {
-  try {
-    await Battery.deleteOne({batteryId});
-  } catch (error) {
-    throw new Error(`Failed to delete battery: ${error.message}`);
+function deleteBattery(batteryId) {
+  // Input validation
+  if (!batteryId || batteryId.trim() === '') {
+    throw new Error('Battery ID is required');
   }
+  return Battery.deleteOne({batteryId})
+      .then((result) => {
+        if (result.deletedCount === 1) {
+          return 'Battery deleted successfully';
+        }
+      });
 }
 
 module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
