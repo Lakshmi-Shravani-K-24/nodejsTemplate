@@ -52,6 +52,18 @@ describe('Battery Schema Validation', () => {
         soc: 50,
       },
       errorMessage: 'Path `chargerate` is required.'
+    },
+    {
+      field: 'description',
+      testData: {
+        batteryId: 'test123',
+        batteryname: 'Test Battery li-Ion',
+        temperature: 34,
+        soc: 60,
+        chargerate: 0.8,
+        description: {}, // Providing an empty object instead of a string
+      },
+      errorMessage: 'Description must be a string.'
     }
   ];
 
@@ -79,24 +91,5 @@ describe('Battery Schema Validation', () => {
 
     const result = await battery.validate();
     assert.strictEqual(result, undefined);
-  });
-
-  it('should ensure description field is a string', async () => {
-    const battery = new Battery({
-      batteryId: 'test123',
-      batteryname: 'Test Battery li-Ion',
-      temperature: 34,
-      soc: 60,
-      chargerate: 0.8,
-      description: {}, // Providing an empty object instead of a string
-    });
-
-    let err;
-    try {
-      await battery.validate();
-    } catch (error) {
-      err = error;
-    }
-    assert.strictEqual(err.errors.description.message, 'Description must be a string.');
   });
 });
