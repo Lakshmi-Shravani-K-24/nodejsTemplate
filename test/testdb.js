@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 const assert = require('assert');
 const {connect, disconnect} = require('../dbconnection.js');
-const {createBattery, findBatteryById, updateBattery, deleteBattery} = require('../index.js');
+const {
+  createBattery,
+  findBatteryById,
+  updateBattery,
+  deleteBattery,
+} = require('../index.js');
+const Battery = require('../BatterySchema');
 
 describe('Database Connection', () => {
   before(async () => {
@@ -75,5 +81,105 @@ describe('Battery CRUD operations', () => {
     await deleteBattery('12345');
     const deletedBattery = await findBatteryById('12345');
     assert.strictEqual(deletedBattery, null);
+  });
+
+  describe('Battery Schema Validation', () => {
+    it('should require batteryId', async () => {
+      const battery = new Battery({
+        batteryname: 'Test Battery',
+        temperature: 25,
+        soc: 50,
+        chargerate: 10,
+      });
+
+      let err;
+      try {
+        await battery.validate();
+      } catch (error) {
+        err = error;
+      }
+      assert.strictEqual(err.errors.batteryId.message, 'Path `batteryId` is required.');
+    });
+
+    it('should require batteryname', async () => {
+      const battery = new Battery({
+        batteryId: 'test123',
+        temperature: 25,
+        soc: 50,
+        chargerate: 10,
+      });
+
+      let err;
+      try {
+        await battery.validate();
+      } catch (error) {
+        err = error;
+      }
+      assert.strictEqual(err.errors.batteryname.message, 'Path `batteryname` is required.');
+    });
+
+    it('should require temperature', async () => {
+      const battery = new Battery({
+        batteryId: 'test123',
+        batteryname: 'Test Battery',
+        soc: 50,
+        chargerate: 10,
+      });
+
+      let err;
+      try {
+        await battery.validate();
+      } catch (error) {
+        err = error;
+      }
+      assert.strictEqual(err.errors.temperature.message, 'Path `temperature` is required.');
+    });
+
+    it('should require soc', async () => {
+      const battery = new Battery({
+        batteryId: 'test123',
+        batteryname: 'Test Battery',
+        temperature: 25,
+        chargerate: 10,
+      });
+
+      let err;
+      try {
+        await battery.validate();
+      } catch (error) {
+        err = error;
+      }
+      assert.strictEqual(err.errors.soc.message, 'Path `soc` is required.');
+    });
+
+    it('should require chargerate', async () => {
+      const battery = new Battery({
+        batteryId: 'test123',
+        batteryname: 'Test Battery',
+        temperature: 25,
+        soc: 50,
+      });
+
+      let err;
+      try {
+        await battery.validate();
+      } catch (error) {
+        err = error;
+      }
+      assert.strictEqual(err.errors.chargerate.message, 'Path `chargerate` is required.');
+    });
+
+    it('should create a valid battery with all required fields', async () => {
+      const battery = new Battery({
+        batteryId: 'test123',
+        batteryname: 'Test Battery',
+        temperature: 25,
+        soc: 50,
+        chargerate: 10,
+      });
+
+      const result = await battery.validate();
+      assert.strictEqual(result, undefined);
+    });
   });
 });
