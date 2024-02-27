@@ -4,7 +4,6 @@ const BatterySchema = new mongoose.Schema({
   batteryId: {
     type: String,
     required: true,
-    unique: true,
   },
   batteryname: {
     type: String,
