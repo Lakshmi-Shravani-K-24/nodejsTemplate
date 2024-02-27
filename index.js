@@ -1,43 +1,40 @@
+/* eslint-disable complexity */
 const Battery = require('./BatterySchema');
 
-function createBattery(batteryData) {
-  // Input validation
+async function createBattery(batteryData) {
   if (!batteryData || Object.keys(batteryData).length === 0) {
-    throw new Error('Battery data is required');
+    return {error: 'Invalid battery data'};
   }
-  return Battery.create(batteryData)
-      .then((newBattery) => newBattery);
+
+  const newBattery = await Battery.create(batteryData);
+  return newBattery;
 }
 
-function findBatteryById(batteryId) {
-  // Input validation
-  if (!batteryId || batteryId.trim() === '') {
-    throw new Error('Battery ID is required');
+async function findBatteryById(batteryId) {
+  if (!batteryId || typeof batteryId !== 'string' || batteryId.trim() === '') {
+    return {error: 'Invalid battery ID'};
   }
-  return Battery.findOne({batteryId})
-      .then((battery) => battery);
+
+  const battery = await Battery.findOne({batteryId});
+  return battery;
 }
 
-function updateBattery(batteryId, updateData) {
-  // Input validation
-  if (!batteryId || batteryId.trim() === '') {
-    throw new Error('Battery ID is required');
+async function updateBattery(batteryId, updateData) {
+  if (!batteryId || typeof batteryId !== 'string' || batteryId.trim() === '') {
+    return {error: 'Invalid battery ID'};
   }
-  return Battery.findOneAndUpdate({batteryId}, updateData, {new: true})
-      .then((updatedBattery) => updatedBattery);
+
+  const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
+  return updatedBattery;
 }
 
-function deleteBattery(batteryId) {
-  // Input validation
-  if (!batteryId || batteryId.trim() === '') {
-    throw new Error('Battery ID is required');
+async function deleteBattery(batteryId) {
+  if (!batteryId || typeof batteryId !== 'string' || batteryId.trim() === '') {
+    return {error: 'Invalid battery ID'};
   }
-  return Battery.deleteOne({batteryId})
-      .then((result) => {
-        if (result.deletedCount === 1) {
-          return 'Battery deleted successfully';
-        }
-      });
+
+  await Battery.deleteOne({batteryId});
+  return {success: true};
 }
 
 module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
