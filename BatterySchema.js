@@ -27,4 +27,4 @@ const BatterySchema = new mongoose.Schema({
 
 const Battery = mongoose.model('Battery', BatterySchema);
 
-module.exports = {BatterySchema, Battery};
+module.exports = Battery;
