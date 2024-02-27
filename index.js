@@ -33,13 +33,6 @@ async function updateBattery(batteryId, updateData) {
   if (validateBatteryId(batteryId)) {
     return {error: 'Invalid battery ID'};
   }
-
-  // Check if the battery with the given ID exists
-  const existingBattery = await Battery.findOne({batteryId});
-  if (!existingBattery) {
-    return {error: 'Battery not found'};
-  }
-
   const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
   return updatedBattery;
 }
@@ -48,16 +41,8 @@ async function deleteBattery(batteryId) {
   if (validateBatteryId(batteryId)) {
     return {error: 'Invalid battery ID'};
   }
-
-  // Check if the battery with the given ID exists
-  const existingBattery = await Battery.findOne({batteryId});
-  if (!existingBattery) {
-    return {error: 'Battery not found'};
-  }
-
   await Battery.deleteOne({batteryId});
   return {};
 }
-
 
 module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
