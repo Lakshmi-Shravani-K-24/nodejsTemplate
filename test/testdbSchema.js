@@ -84,10 +84,10 @@ describe('Battery Schema Validation', () => {
   it('should ensure description field is a string', async () => {
     const battery = new Battery({
       batteryId: 'test123',
-      batteryname: 'Test Battery',
-      temperature: 25,
-      soc: 50,
-      chargerate: 10,
+      batteryname: 'Test Battery li-Ion',
+      temperature: 34,
+      soc: 60,
+      chargerate: 0.8,
       description: {}, // Providing an empty object instead of a string
     });
 
