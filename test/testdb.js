@@ -6,7 +6,7 @@ const {
   findBatteryById,
   updateBattery,
   deleteBattery,
-} = require('../index.js');
+} = require('../index');
 
 describe('Database Connection', () => {
   before(async () => {
