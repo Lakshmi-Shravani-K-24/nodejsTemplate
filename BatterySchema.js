@@ -24,9 +24,8 @@ const BatterySchema = new mongoose.Schema({
   description: {
     type: String,
     min: 2,
-    max: 50,
   },
-}, {timestamps: true});
+});
 
 const Battery = mongoose.model('Battery', BatterySchema);
 
