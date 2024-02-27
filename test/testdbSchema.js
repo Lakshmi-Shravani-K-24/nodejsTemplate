@@ -80,4 +80,23 @@ describe('Battery Schema Validation', () => {
     const result = await battery.validate();
     assert.strictEqual(result, undefined);
   });
+
+  it('should ensure description field is a string', async () => {
+    const battery = new Battery({
+      batteryId: 'test123',
+      batteryname: 'Test Battery',
+      temperature: 25,
+      soc: 50,
+      chargerate: 10,
+      description: {}, // Providing an empty object instead of a string
+    });
+
+    let err;
+    try {
+      await battery.validate();
+    } catch (error) {
+      err = error;
+    }
+    assert.strictEqual(err.errors.description.message, 'Description must be a string.');
+  });
 });
