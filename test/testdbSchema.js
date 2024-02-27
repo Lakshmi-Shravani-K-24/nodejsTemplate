@@ -1,5 +1,5 @@
 const assert = require('assert');
-const Battery = require('../BatterySchema');
+const Battery = require('../BatterySchema.js');
 
 describe('Battery Schema Validation', () => {
   const testCases = [
