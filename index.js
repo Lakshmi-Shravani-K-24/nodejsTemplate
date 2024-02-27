@@ -1,70 +1,46 @@
+/* eslint-disable max-len */
 /* eslint-disable complexity */
-const Battery = require('./BatterySchema'); // Assuming your model file is in the same directory
+const Battery = require('./BatterySchema');
 
-// CREATE operation
-async function createBattery(batteryData) {
-  validateBatteryData(batteryData);
-  return Battery.create(batteryData);
-}
-
-// READ operation
-function getBatteryById(batteryId) {
-  validateBatteryId(batteryId);
-  return Battery.findById(batteryId);
-}
-
-// UPDATE operation
-async function updateBattery(batteryId, objectId, newData) {
-  validateBatteryId(batteryId);
-  if (newData === null || newData === undefined) {
-    throw new Error('New data is required for updating the battery.');
-  }
-  return Battery.findByIdAndUpdate(objectId, newData, {new: true});
-}
-
-// DELETE operation
-async function deleteBattery(batteryId) {
-  validateBatteryId(batteryId);
-  return Battery.findByIdAndDelete(batteryId);
-}
-
-// Function to validate battery data
+// Validation function to check if battery data or ID is empty or invalid
 function validateBatteryData(data) {
-  const {batteryname, temperature, soc, chargerate} = data;
-  const errors = [];
-
-  function checkRequired(field, errorMessage) {
-    if (!field) {
-      errors.push(errorMessage);
-    }
-  }
-
-  function checkNumber(field, fieldName) {
-    if (typeof field !== 'number' || isNaN(field)) {
-      errors.push(`${fieldName} must be a number.`);
-    }
-  }
-
-  checkRequired(batteryname, 'Battery name is required.');
-  checkNumber(temperature, 'Temperature');
-  checkNumber(soc, 'State of charge (SOC)');
-  checkNumber(chargerate, 'Charging rate');
-
-  if (errors.length > 0) {
-    throw new Error(errors.join('\n'));
-  }
+  return !data || typeof data !== 'object' || Object.keys(data).length === 0;
 }
 
-function validateBatteryId(batteryId) {
-  if (!batteryId) {
-    throw new Error('Battery ID is required.');
-  }
+function validateBatteryId(id) {
+  return !id || typeof id !== 'string' || id.trim() === '' || id.length > 100;
 }
 
+async function createBattery(batteryData) {
+  if (validateBatteryData(batteryData)) {
+    return {error: 'Invalid battery data'};
+  }
+  const newBattery = await Battery.create(batteryData);
+  return newBattery;
+}
 
-module.exports = {
-  createBattery,
-  getBatteryById,
-  updateBattery,
-  deleteBattery,
-};
+async function findBatteryById(batteryId) {
+  if (validateBatteryId(batteryId)) {
+    return {error: 'Invalid battery ID'};
+  }
+  const battery = await Battery.findOne({batteryId});
+  return battery;
+}
+
+async function updateBattery(batteryId, updateData) {
+  if (validateBatteryId(batteryId)) {
+    return {error: 'Invalid battery ID'};
+  }
+  const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
+  return updatedBattery;
+}
+
+async function deleteBattery(batteryId) {
+  if (validateBatteryId(batteryId)) {
+    return {error: 'Invalid battery ID'};
+  }
+  await Battery.deleteOne({batteryId});
+  return {success: true};
+}
+
+module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
