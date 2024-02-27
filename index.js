@@ -1,43 +1,70 @@
-const Battery = require('./BatterySchema');
+/* eslint-disable complexity */
+const Battery = require('./BatterySchema'); // Assuming your model file is in the same directory
 
-// Validation function to check if battery data or ID is empty or invalid
-function validateBatteryData(data) {
-  return !data || Object.keys(data).length === 0;
-}
-function validateBatteryId(id) {
-  return !id || typeof id !== 'string' || id.trim() === '';
-}
-
+// CREATE operation
 async function createBattery(batteryData) {
-  if (validateBatteryData(batteryData)) {
-    return {error: 'Invalid battery data'};
-  }
-  const newBattery = await Battery.create(batteryData);
-  return newBattery;
+  validateBatteryData(batteryData);
+  return Battery.create(batteryData);
 }
 
-async function findBatteryById(batteryId) {
-  if (validateBatteryId(batteryId)) {
-    return {error: 'Invalid battery ID'};
-  }
-  const battery = await Battery.findOne({batteryId});
-  return battery;
+// READ operation
+function getBatteryById(batteryId) {
+  validateBatteryId(batteryId);
+  return Battery.findById(batteryId);
 }
 
-async function updateBattery(batteryId, updateData) {
-  if (validateBatteryId(batteryId)) {
-    return {error: 'Invalid battery ID'};
+// UPDATE operation
+async function updateBattery(batteryId, objectId, newData) {
+  validateBatteryId(batteryId);
+  if (newData === null || newData === undefined) {
+    throw new Error('New data is required for updating the battery.');
   }
-  const updatedBattery = await Battery.findOneAndUpdate({batteryId}, updateData, {new: true});
-  return updatedBattery;
+  return Battery.findByIdAndUpdate(objectId, newData, {new: true});
 }
 
+// DELETE operation
 async function deleteBattery(batteryId) {
-  if (validateBatteryId(batteryId)) {
-    return {error: 'Invalid battery ID'};
-  }
-  await Battery.deleteOne({batteryId});
-  return {success: true};
+  validateBatteryId(batteryId);
+  return Battery.findByIdAndDelete(batteryId);
 }
 
-module.exports = {createBattery, findBatteryById, updateBattery, deleteBattery};
+// Function to validate battery data
+function validateBatteryData(data) {
+  const {batteryname, temperature, soc, chargerate} = data;
+  const errors = [];
+
+  function checkRequired(field, errorMessage) {
+    if (!field) {
+      errors.push(errorMessage);
+    }
+  }
+
+  function checkNumber(field, fieldName) {
+    if (typeof field !== 'number' || isNaN(field)) {
+      errors.push(`${fieldName} must be a number.`);
+    }
+  }
+
+  checkRequired(batteryname, 'Battery name is required.');
+  checkNumber(temperature, 'Temperature');
+  checkNumber(soc, 'State of charge (SOC)');
+  checkNumber(chargerate, 'Charging rate');
+
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'));
+  }
+}
+
+function validateBatteryId(batteryId) {
+  if (!batteryId) {
+    throw new Error('Battery ID is required.');
+  }
+}
+
+
+module.exports = {
+  createBattery,
+  getBatteryById,
+  updateBattery,
+  deleteBattery,
+};
