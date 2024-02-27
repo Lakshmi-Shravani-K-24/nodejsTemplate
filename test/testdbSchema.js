@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Battery = require('../BatterySchema');
+const {connect, disconnect} = require('../dbconnection.js');
 
 before(async () => {
     await connect(); // Connect to the in-memory database before running tests
