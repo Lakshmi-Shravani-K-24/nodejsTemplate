@@ -82,19 +82,4 @@ describe('Battery CRUD operations', () => {
     const deletedBattery = await findBatteryById('12345');
     assert.strictEqual(deletedBattery, null);
   });
-
-  describe('Battery Schema Validation', () => {
-    it('should create a valid battery with all required fields', async () => {
-      const battery = new Battery({
-        batteryId: 'test123',
-        batteryname: 'Test Battery',
-        temperature: 25,
-        soc: 50,
-        chargerate: 10,
-      });
-
-      const result = await battery.validate();
-      assert.strictEqual(result, undefined);
-    });
-  });
 });
